@@ -1,2 +1,2 @@
 # easysync2
-The EasySync 2 Algorithm
+The EasySync2 Algorithm
