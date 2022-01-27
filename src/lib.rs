@@ -1,3 +1,5 @@
+mod apool;
+
 #[cfg(test)]
 mod tests {
     #[test]

@@ -1,8 +1,8 @@
 [package]
 name = "easysync2"
 version = "0.1.0"
-authors = ["henrylee2cn <henrylee2cn@gmail.com>", "maiyang <yangwenmai.yw@gmail.com>"]
-edition = "2018"
+authors = ["henrylee2cn <henrylee2cn@gmail.com>"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
