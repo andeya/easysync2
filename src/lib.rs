@@ -1,4 +1,5 @@
 mod apool;
+mod changeset;
 
 #[cfg(test)]
 mod tests {
