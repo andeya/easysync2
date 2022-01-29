@@ -1,5 +1,10 @@
 mod apool;
 mod changeset;
+mod digit;
+mod head;
+mod operation;
+mod element;
+mod char_bank;
 
 #[cfg(test)]
 mod tests {
