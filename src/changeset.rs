@@ -1,10 +1,8 @@
-use std::array::IntoIter;
 use std::borrow::BorrowMut;
 use std::fmt::{Display, Formatter};
 use std::io::Read;
 use std::io::Write;
 use std::iter::Peekable;
-use std::str::Bytes;
 
 use crate::{char_bank::CharBank, element::Element, head::Head, operation::Operation};
 
@@ -35,9 +33,9 @@ impl Display for Changeset {
 }
 
 impl Element for Changeset {
-    fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<Self> where Self: Sized {
+    fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<Changeset> {
         let head = Head::from_iter(iter)?;
-        let ops: Operation = Operation::from_iter(iter)?;
+        let ops = Operation::from_iter(iter)?;
         let delta = head.char_delta();
         if delta != ops.char_added() - ops.char_deleted() {
             return Err(anyhow::Error::msg("wrong data"))
@@ -62,5 +60,6 @@ impl Element for Changeset {
 #[test]
 fn changeset() {
     let mut b = "Z:1>0".as_bytes().iter().map(|item| item.clone());
-    assert_eq!("Z:1>0", Changeset::from_iter(&mut b.peekable()).unwrap().to_string());
+    assert_eq!("Z:1>0", Changeset::from_iter(&mut b.peekable()).unwrap()
+                                                               .to_string());
 }

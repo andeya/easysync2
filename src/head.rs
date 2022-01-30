@@ -1,5 +1,4 @@
 use std::fmt::{Display, Formatter};
-use std::io::Read;
 use std::io::Write;
 use std::iter::Peekable;
 
