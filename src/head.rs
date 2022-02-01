@@ -4,6 +4,7 @@ use std::iter::Peekable;
 
 use crate::digit;
 
+#[derive(Clone)]
 pub(crate) struct Head {
     old_len: u32,
     new_len: u32,

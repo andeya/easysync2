@@ -4,9 +4,10 @@ use std::io::Read;
 use std::io::Write;
 use std::iter::Peekable;
 
-use crate::{apool, body::Body, head::Head};
+use crate::{body::Body, head::Head};
 use crate::apool::Apool;
 
+#[derive(Clone)]
 pub(crate) struct Changeset<'a> {
     head: Head,
     body: Body<'a>,
@@ -35,7 +36,7 @@ impl<'a> Changeset<'a> {
     fn follow(&self, next: &Changeset) -> Changeset {
         unimplemented!()
     }
-    fn compose(&self, next: &Changeset) -> Changeset {
+    pub(crate) fn compose(&mut self, next: &Changeset) {
         unimplemented!()
     }
 }
@@ -49,8 +50,7 @@ impl<'a> Display for Changeset<'a> {
 
 #[test]
 fn changeset() {
-    let mem = apool::Mem::new(1);
+    let mem = crate::apool::Mem::new(1);
     let mut b = "Z:1>0".as_bytes().iter().map(|item| item.clone());
-    assert_eq!("Z:1>0", Changeset::from_iter(&mem, &mut b.peekable()).unwrap()
-                                                                     .to_string());
+    assert_eq!("Z:1>0", Changeset::from_iter(&mem, &mut b.peekable()).unwrap().to_string());
 }

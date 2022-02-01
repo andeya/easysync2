@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct AttribPair {
     pub attrib_num: u32,
     pub attrib_str: String,

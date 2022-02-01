@@ -6,6 +6,7 @@ use std::string::String;
 use crate::{apool::AttribPair, digit};
 use crate::apool::Apool;
 
+#[derive(Clone)]
 enum Monomial {
     ADD(Vec<AttribPair>, u32),
     EQ(Vec<AttribPair>, u32),
@@ -13,6 +14,7 @@ enum Monomial {
     Newline(u32),
 }
 
+#[derive(Clone)]
 pub(crate) struct Body<'a> {
     operation: Vec<Monomial>,
     add_num: u32,
