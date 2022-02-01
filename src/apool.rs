@@ -19,8 +19,8 @@ pub(crate) struct Mem {
 }
 
 impl Mem {
-    fn new(doc_id: u32) -> impl Apool {
-        Mem { doc_id, num_to_attrib: Default::default(), attrib_to_num: Default::default() }
+    pub(crate) fn new(doc_id: u32) -> Box<dyn Apool> {
+        Box::new(Mem { doc_id, num_to_attrib: Default::default(), attrib_to_num: Default::default() })
     }
 }
 

@@ -3,7 +3,8 @@ use std::io::Write;
 use std::iter::Peekable;
 use std::string::String;
 
-use crate::{apool::AttribPair, digit, element::Element};
+use crate::{apool::AttribPair, digit};
+use crate::apool::Apool;
 
 enum Monomial {
     ADD(Vec<AttribPair>, u32),
@@ -12,13 +13,21 @@ enum Monomial {
     Newline(u32),
 }
 
-pub(crate) struct Operation {
-    polynomial: Vec<Monomial>,
+pub(crate) struct Body<'a> {
+    operation: Vec<Monomial>,
     add_num: u32,
     minus_num: u32,
+    char_bank: Vec<char>,
+    apool: &'a Box<dyn Apool>,
 }
 
-impl Operation {
+impl<'a> Body<'a> {
+    pub(crate) fn from_iter<I: Iterator<Item=u8>>(apool: &'a Box<dyn Apool>, iter: &mut Peekable<I>) -> anyhow::Result<Self> where Self: Sized {
+        todo!()
+    }
+    fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
+        todo!()
+    }
     pub(crate) fn char_added(&self) -> i64 {
         todo!()
     }
@@ -27,10 +36,10 @@ impl Operation {
     }
 }
 
-impl Display for Operation {
+impl<'a> Display for Body<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut s = Vec::new();
-        for x in &self.polynomial {
+        for x in &self.operation {
             match x {
                 Monomial::EQ(attrs, count) => {
                     for x in attrs {
@@ -58,16 +67,15 @@ impl Display for Operation {
                 },
             }
         }
+        if self.char_bank.len() > 0 {
+            s.push(b'$');
+            let mut buf = vec![0; 4];
+            for c in &self.char_bank {
+                for x in c.encode_utf8(&mut buf).as_bytes() {
+                    s.push(x.clone());
+                }
+            }
+        }
         unsafe { write!(f, "{}", String::from_utf8_unchecked(s)) }
-    }
-}
-
-impl Element for Operation {
-    fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<Self> where Self: Sized {
-        todo!()
-    }
-
-    fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
-        todo!()
     }
 }

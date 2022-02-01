@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter};
 use std::io::Write;
 use std::iter::Peekable;
 
-use crate::{digit, element::Element};
+use crate::digit;
 
 pub(crate) struct Head {
     old_len: u32,
@@ -22,10 +22,7 @@ impl Head {
     fn invalie_payload_error() -> anyhow::Error {
         anyhow::Error::msg("invalid payload head")
     }
-}
-
-impl Element for Head {
-    fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<Self> where Self: Sized {
+    pub(crate) fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<Self> where Self: Sized {
         let mut buf = vec![];
         type Step = u8;
         let mut step: Step = 0;
