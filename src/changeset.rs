@@ -6,6 +6,7 @@ use std::iter::Peekable;
 
 use crate::{body::Body, head::Head};
 use crate::apool::Apool;
+use crate::write_to::WriteTo;
 
 #[derive(Clone)]
 pub(crate) struct Changeset<'a> {
@@ -22,16 +23,13 @@ impl<'a> Changeset<'a> {
     fn from_iter<I: Iterator<Item=u8>>(apool: &'a Box<dyn Apool>, iter: &mut Peekable<I>) -> anyhow::Result<Self> {
         let head = Head::from_iter(iter)?;
         let body = Body::from_iter(apool, iter)?;
-        if head.char_delta() != body.char_added() - body.char_deleted() {
-            return Err(anyhow::Error::msg("wrong data"))
+        if head.char_delta() != body.char_delta() {
+            return Err(anyhow::Error::msg("wrong data"));
         }
         Ok(Self {
             head,
             body,
         })
-    }
-    fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
-        todo!()
     }
     fn follow(&self, next: &Changeset) -> Changeset {
         unimplemented!()
@@ -41,12 +39,17 @@ impl<'a> Changeset<'a> {
     }
 }
 
-impl<'a> Display for Changeset<'a> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}{}", self.head, self.body)
+impl<'a> WriteTo for Changeset<'a> {
+    fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
+        todo!()
     }
 }
 
+impl<'a> Display for Changeset<'a> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        <Self as WriteTo>::fmt(self, f)
+    }
+}
 
 #[test]
 fn changeset() {

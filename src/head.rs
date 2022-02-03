@@ -3,6 +3,7 @@ use std::io::Write;
 use std::iter::Peekable;
 
 use crate::digit;
+use crate::write_to::WriteTo;
 
 #[derive(Clone)]
 pub(crate) struct Head {
@@ -102,6 +103,9 @@ impl Head {
         }
         return Ok(head)
     }
+}
+
+impl WriteTo for Head {
     fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
         writer.write(b"Z:")?;
         writer.write(digit::to_vec(self.old_len, 36).as_slice())?;
@@ -120,9 +124,7 @@ impl Head {
 
 impl Display for Head {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut w = Vec::new();
-        self.write_to(&mut w).unwrap();
-        write!(f, "{}", unsafe { String::from_utf8_unchecked(w) })
+        <Self as WriteTo>::fmt(self, f)
     }
 }
 

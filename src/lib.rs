@@ -4,6 +4,7 @@ mod digit;
 mod head;
 mod body;
 mod atext;
+mod write_to;
 
 #[cfg(test)]
 mod tests {
