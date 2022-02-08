@@ -1,3 +1,5 @@
+use std::iter::Peekable;
+
 pub(crate) fn to_num(bytes: Vec<u8>, radix: u32) -> anyhow::Result<u32> {
     if radix > 36 {
         panic!("to_num: radix is too high (maximum 36)");
@@ -51,4 +53,24 @@ pub fn is_valid(b: u8) -> bool {
         b'0'..=b'9' | b'a'..=b'z' => true,
         _ => false,
     }
+}
+
+pub fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<u32> {
+    let mut buf = vec![];
+    loop {
+        match iter.peek() {
+            None => break,
+            Some(b) => match b {
+                b'0'..=b'9' | b'a'..=b'z' => {
+                    buf.insert(buf.len(), b.clone())
+                }
+                _ => break,
+            }
+        }
+        iter.next();
+    };
+    if buf.len() > 0 {
+        return to_num(buf.to_vec(), 36)
+    }
+    return Ok(0)
 }

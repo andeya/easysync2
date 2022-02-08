@@ -1,6 +1,4 @@
-use std::borrow::Borrow;
 use std::io::Read;
-use std::thread::sleep;
 
 use crate::apool::Apool;
 use crate::changeset::Changeset;

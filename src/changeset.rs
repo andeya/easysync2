@@ -4,7 +4,7 @@ use std::io::Read;
 use std::io::Write;
 use std::iter::Peekable;
 
-use crate::{body::Body, head::Head};
+use crate::{apool, body::Body, head::Head};
 use crate::apool::Apool;
 use crate::write_to::WriteTo;
 
@@ -24,7 +24,7 @@ impl<'a> Changeset<'a> {
         let head = Head::from_iter(iter)?;
         let body = Body::from_iter(apool, iter)?;
         if head.char_delta() != body.char_delta() {
-            return Err(anyhow::Error::msg("wrong data"));
+            return Err(anyhow::Error::msg(format!("wrong data: head.char_delta({}) != body.char_delta({})", head.char_delta(), body.char_delta())));
         }
         Ok(Self {
             head,
@@ -41,7 +41,8 @@ impl<'a> Changeset<'a> {
 
 impl<'a> WriteTo for Changeset<'a> {
     fn write_to(&self, writer: &mut dyn Write) -> anyhow::Result<()> {
-        todo!()
+        self.head.write_to(writer)?;
+        self.body.write_to(writer)
     }
 }
 
@@ -53,7 +54,11 @@ impl<'a> Display for Changeset<'a> {
 
 #[test]
 fn changeset() {
-    let mem = crate::apool::Mem::new(1);
-    let mut b = "Z:1>0".as_bytes().iter().map(|item| item.clone());
-    assert_eq!("Z:1>0", Changeset::from_iter(&mem, &mut b.peekable()).unwrap().to_string());
+    let mut mem = crate::apool::Mem::new(1);
+    mem.set(apool::AttribPair { attrib_num: 4, attrib_str: "color:red".to_string() });
+    mem.set(apool::AttribPair { attrib_num: 5, attrib_str: "color:black".to_string() });
+    const S: &str = "Z:196>1|5=97=31*4*5+1$x";
+    let b = S.as_bytes().iter().map(|item| item.clone());
+    let cs = Changeset::from_iter(&mem, &mut b.peekable());
+    assert_eq!(S, cs.unwrap_or_else(|e| panic!("{}", e)).to_string());
 }
