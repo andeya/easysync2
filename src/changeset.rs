@@ -4,12 +4,14 @@ use std::io::Read;
 use std::io::Write;
 use std::iter::Peekable;
 
-use crate::{apool, body::Body, head::Head};
-use crate::apool::Apool;
+use anyhow::anyhow;
+
+use crate::{apool::{self, Apool}, body::Body, head::Head};
+use crate::body::Monomial;
 use crate::write_to::WriteTo;
 
 #[derive(Clone)]
-pub(crate) struct Changeset<'a> {
+pub struct Changeset<'a> {
     head: Head,
     body: Body<'a>,
 }
@@ -31,10 +33,15 @@ impl<'a> Changeset<'a> {
             body,
         })
     }
-    fn follow(&self, next: &Changeset) -> Changeset {
-        unimplemented!()
+    pub fn follow(&self, next: &Changeset) -> anyhow::Result<Changeset> {
+        if self.head.old_len() != next.head.old_len() {
+            return Err(anyhow!("old lengths of two changsets are not equal"))
+        }
+        let old_op = self.body.operation();
+        let new_op = next.body.operation();
+        return Err(anyhow!("old lengths of two changsets are not equal"))
     }
-    pub(crate) fn compose(&mut self, next: &Changeset) {
+    pub fn compose(&mut self, next: &Changeset) {
         unimplemented!()
     }
 }
@@ -55,8 +62,8 @@ impl<'a> Display for Changeset<'a> {
 #[test]
 fn changeset() {
     let mut mem = crate::apool::Mem::new(1);
-    mem.set(apool::AttribPair { attrib_num: 4, attrib_str: "color:red".to_string() });
-    mem.set(apool::AttribPair { attrib_num: 5, attrib_str: "color:black".to_string() });
+    mem.set(apool::AttribPair { id: 4, key: "color:red".to_string() });
+    mem.set(apool::AttribPair { id: 5, key: "color:black".to_string() });
     const S: &str = "Z:196>1|5=97=31*4*5+1$x";
     let b = S.as_bytes().iter().map(|item| item.clone());
     let cs = Changeset::from_iter(&mem, &mut b.peekable());

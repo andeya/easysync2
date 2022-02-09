@@ -7,7 +7,7 @@ use crate::apool::Apool;
 use crate::write_to::WriteTo;
 
 #[derive(Clone)]
-enum Monomial {
+pub(crate) enum Monomial {
     ADD { attrib_pair: Vec<AttribPair>, contains_newline_num: u32, add_num: u32 },
     EQ { attrib_pair: Vec<AttribPair>, contains_newline_num: u32, eq_num: u32 },
     MINUS { contains_newline_num: u32, minus_num: u32 },
@@ -50,7 +50,7 @@ impl<'a> Body<'a> {
                                 }
                                 let _ = iter.next();
                                 let num = digit::from_iter(iter)?;
-                                if let Some(attr) = body.apool.get(num) {
+                                if let Some(attr) = body.apool.get_attrib(num) {
                                     attrib_pair.push(attr.clone())
                                 }
                             }
@@ -115,6 +115,9 @@ impl<'a> Body<'a> {
         };
         return Ok(body)
     }
+    pub(crate) fn operation(&self) -> &Vec<Monomial> {
+        &self.operation
+    }
 }
 
 impl<'a> WriteTo for Body<'a> {
@@ -124,34 +127,34 @@ impl<'a> WriteTo for Body<'a> {
                 Monomial::MINUS { contains_newline_num, minus_num, } => {
                     if contains_newline_num > &0_u32 {
                         writer.write_all(b"|")?;
-                        writer.write_all(unsafe { digit::to_vec(contains_newline_num.clone(), 36).as_mut() })?;
+                        writer.write_all(digit::to_vec(contains_newline_num.clone(), 36).as_mut())?;
                     }
                     writer.write_all(b"-")?;
-                    writer.write_all(unsafe { digit::to_vec(minus_num.clone(), 36).as_mut() })?;
+                    writer.write_all(digit::to_vec(minus_num.clone(), 36).as_mut())?;
                 },
                 Monomial::EQ { attrib_pair, eq_num, contains_newline_num } => {
                     for x in attrib_pair {
                         writer.write_all(b"*")?;
-                        writer.write_all(digit::to_vec(x.attrib_num, 36).as_mut())?;
+                        writer.write_all(digit::to_vec(x.id, 36).as_mut())?;
                     }
                     if contains_newline_num > &0_u32 {
                         writer.write_all(b"|")?;
-                        writer.write_all(unsafe { digit::to_vec(contains_newline_num.clone(), 36).as_mut() })?;
+                        writer.write_all(digit::to_vec(contains_newline_num.clone(), 36).as_mut())?;
                     }
                     writer.write_all(b"=")?;
-                    writer.write_all(unsafe { digit::to_vec(eq_num.clone(), 36).as_mut() })?;
+                    writer.write_all(digit::to_vec(eq_num.clone(), 36).as_mut())?;
                 },
                 Monomial::ADD { attrib_pair, add_num, contains_newline_num } => {
                     for x in attrib_pair {
                         writer.write_all(b"*")?;
-                        writer.write_all(digit::to_vec(x.attrib_num, 36).as_mut())?;
+                        writer.write_all(digit::to_vec(x.id, 36).as_mut())?;
                     }
                     if contains_newline_num > &0_u32 {
                         writer.write_all(b"|")?;
-                        writer.write_all(unsafe { digit::to_vec(contains_newline_num.clone(), 36).as_mut() })?;
+                        writer.write_all(digit::to_vec(contains_newline_num.clone(), 36).as_mut())?;
                     }
                     writer.write_all(b"+")?;
-                    writer.write_all(unsafe { digit::to_vec(add_num.clone(), 36).as_mut() })?;
+                    writer.write_all(digit::to_vec(add_num.clone(), 36).as_mut())?;
                 },
             }
         }

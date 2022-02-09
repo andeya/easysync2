@@ -1,3 +1,6 @@
+pub use atext::AText;
+pub use changeset::Changeset;
+
 mod apool;
 mod changeset;
 mod digit;

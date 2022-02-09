@@ -48,13 +48,6 @@ pub(crate) fn to_vec(num: u32, radix: u32) -> Vec<u8> {
     return vec;
 }
 
-pub fn is_valid(b: u8) -> bool {
-    match b {
-        b'0'..=b'9' | b'a'..=b'z' => true,
-        _ => false,
-    }
-}
-
 pub fn from_iter<I: Iterator<Item=u8>>(iter: &mut Peekable<I>) -> anyhow::Result<u32> {
     let mut buf = vec![];
     loop {

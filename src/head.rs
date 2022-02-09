@@ -12,11 +12,11 @@ pub(crate) struct Head {
 }
 
 impl Head {
-    pub(crate) fn new(old_len: u32, new_len: u32) -> Head {
-        Head {
-            old_len,
-            new_len,
-        }
+    pub(crate) fn old_len(&self) -> u32 {
+        self.old_len
+    }
+    pub(crate) fn new_len(&self) -> u32 {
+        self.new_len
     }
     pub(crate) fn char_delta(&self) -> i64 {
         (self.new_len - self.old_len) as i64
@@ -132,6 +132,6 @@ impl Display for Head {
 fn head() {
     const S: &'static str = "Z:1>0";
     assert_eq!(S, (Head { old_len: 1, new_len: 1 }).to_string());
-    let mut b = S.as_bytes().iter().map(|item| item.clone());
+    let b = S.as_bytes().iter().map(|item| item.clone());
     assert_eq!(S, Head::from_iter(&mut b.peekable()).unwrap().to_string());
 }
