@@ -35,11 +35,16 @@ impl<'a> Changeset<'a> {
     }
     pub fn follow(&self, next: &Changeset) -> anyhow::Result<Changeset> {
         if self.head.old_len() != next.head.old_len() {
-            return Err(anyhow!("old lengths of two changsets are not equal"))
+            return Err(anyhow!("old lengths of two changsets are not equal"));
         }
         let old_op = self.body.operation();
         let new_op = next.body.operation();
-        return Err(anyhow!("old lengths of two changsets are not equal"))
+        let mut new_idx = 0;
+        for old in old_op {
+            let new = new_op.get(new_idx);
+
+        }
+        return Err(anyhow!("old lengths of two changsets are not equal"));
     }
     pub fn compose(&mut self, next: &Changeset) {
         unimplemented!()
